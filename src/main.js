@@ -12,6 +12,9 @@ import { sync } from 'vuex-router-sync'
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
+import firadio from './firadio'
+Vue.use(firadio)
+
 require('es6-promise').polyfill()
 
 /** i18n **/
@@ -98,7 +101,7 @@ const http = Vue.http
 * 请不要直接复制下面代码
 */
 
-if (process.env.NODE_ENV === 'production') {
+if (0 && process.env.NODE_ENV === 'production') {
   wx.ready(() => {
     console.log('wechat ready')
     wx.onMenuShareAppMessage({
@@ -172,7 +175,7 @@ router.beforeEach(function (to, from, next) {
 
 router.afterEach(function (to) {
   store.commit('updateLoadingStatus', {isLoading: false})
-  if (process.env.NODE_ENV === 'production') {
+  if (0 && process.env.NODE_ENV === 'production') {
     ga && ga('set', 'page', to.fullPath)
     ga && ga('send', 'pageview')
   }

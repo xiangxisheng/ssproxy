@@ -2,7 +2,7 @@
 
 const path = require('path')
 const fs = require('fs')
-const demoPath = path.resolve(__dirname, '../src/demo_list.json')
+const demoPath = path.resolve(__dirname, '../src/firadio/router.json')
 
 const argv = require('yargs').argv
 argv.simulate = argv.simulate || false
@@ -46,14 +46,14 @@ module.exports = {
           }
           str.push(`{
   path: '${path}',
-  component: () => import('./demos/${filename}.vue').then(m => m.default)
+  component: () => import('./firadio-router/${filename}.vue').then(m => m.default)
 }`)
         })
 
         // 404 page
         str.push(`{
   path: '*',
-  component: () => import('./demos/NotFoundComponent.vue').then(m => m.default)
+  component: () => import('./firadio-router/NotFoundComponent.vue').then(m => m.default)
 }`)
 
         str = `[${str.join(',\n')}]`

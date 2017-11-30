@@ -16,25 +16,14 @@
 
       <!-- drawer content -->
       <div slot="drawer">
-        <group title="Drawer demo(beta)" style="margin-top:20px;">
-          <cell title="Demo" link="/demo" value="演示" @click.native="drawerVisibility = false">
-          </cell>
-          <cell title="Buy me a coffee" link="project/donate" @click.native="drawerVisibility = false">
-          </cell>
-          <cell title="Github" link="http://github.com/airyland/vux" value="Star me" @click.native="drawerVisibility = false">
-          </cell>
-        </group>
-        <group title="showMode">
-          <radio v-model="showMode" :options="['push', 'overlay']" @on-change="onShowModeChange"></radio>
-        </group>
-        <group title="placement">
-          <radio v-model="showPlacement" :options="['left', 'right']" @on-change="onPlacementChange"></radio>
+        <group title="用户菜单" style="margin-top:20px;">
+          <cell title="登录" link="/demo" value="演示" @click.native="drawerVisibility = false"></cell>
         </group>
       </div>
 
       <!-- main content -->
       <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
-        
+
         <x-header slot="header"
         style="width:100%;position:absolute;left:0;top:0;z-index:100;"
         :left-options="leftOptions"
@@ -46,26 +35,27 @@
             <x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px;"></x-icon>
           </span>
         </x-header>
-        
+
         <!-- remember to import BusPlugin in main.js if you use components: x-img and sticky -->
         <transition
-        @after-enter="$vux.bus && $vux.bus.$emit('vux:after-view-enter')" 
+        @after-enter="$vux.bus && $vux.bus.$emit('vux:after-view-enter')"
         :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
           <router-view class="router-view"></router-view>
         </transition>
 
         <tabbar class="vux-demo-tabbar" icon-class="vux-center" v-show="!isTabbarDemo" slot="bottom">
-          <tabbar-item :link="{path:'/'}" :selected="route.path === '/'">
-            <span class="demo-icon-22 vux-demo-tabbar-icon-home" slot="icon" style="position:relative;top: -2px;">&#xe637;</span>
-            <span slot="label">Home</span>
+          <tabbar-item :link="{path:'/'}" :selected="isIndex">
+            <span class="demo-icon-22" slot="icon"><x-icon type="ios-home-outline"></x-icon></span>
+            <span slot="label"><span v-if="indexTitleName" class="vux-demo-tabbar-component">{{indexTitleName}}</span><span v-else>{{$t('主页')}}</span></span>
           </tabbar-item>
-          <tabbar-item :link="{path:'/demo'}" :selected="isDemo" badge="9">
-            <span class="demo-icon-22" slot="icon">&#xe633;</span>
-            <span slot="label"><span v-if="componentName" class="vux-demo-tabbar-component">{{componentName}}</span><span v-else>Demos</span></span>
+          <tabbar-item :link="{path:'/panel'}" :selected="isYun">
+            <!--<span class="demo-icon-22" slot="icon">&#xe642;</span>-->
+            <span class="demo-icon-22" slot="icon"><x-icon type="ios-cloud-outline"></x-icon></span>
+            <span slot="label"><span v-if="yunTitleName" class="vux-demo-tabbar-component">{{yunTitleName}}</span><span v-else>{{$t('面板')}}</span></span>
           </tabbar-item>
-          <tabbar-item :link="{path:'/project/donate'}" :selected="route.path === '/project/donate'" show-dot>
-            <span class="demo-icon-22" slot="icon">&#xe630;</span>
-            <span slot="label">Donate</span>
+          <tabbar-item :link="{path:'/user'}" :selected="isUser">
+            <span class="demo-icon-22" slot="icon"><x-icon type="ios-person-outline"></x-icon></span>
+            <span slot="label"><span v-if="userTitleName" class="vux-demo-tabbar-component">{{userTitleName}}</span><span v-else>{{$t('用户')}}</span></span>
           </tabbar-item>
         </tabbar>
 
@@ -73,6 +63,27 @@
     </drawer>
   </div>
 </template>
+
+<i18n>
+Submit:
+  en: Submit
+  zh-CN: 提交
+Home:
+  en: Home
+  zh-CN: 主页
+message:
+  en: Message
+  zh-CN: 消息
+user:
+  en: User Center
+  zh-CN: 用户中心
+login:
+  en: Login
+  zh-CN: 登录
+sign:
+  en: Sign
+  zh-CN: 登录
+</i18n>
 
 <script>
 import { Radio, Group, Cell, Badge, Drawer, Actionsheet, ButtonTab, ButtonTabItem, ViewBox, XHeader, Tabbar, TabbarItem, Loading, TransferDom } from 'vux'
@@ -98,6 +109,44 @@ export default {
     Actionsheet
   },
   methods: {
+    warn (text) {
+      this.$vux.toast.show({
+        type: 'warn',
+        text: text,
+        width: '20em'
+      })
+    },
+    alert (content, fun, title) {
+      let that = this
+      if (title === undefined) {
+        title = '提示'
+      }
+      this.$vux.alert.show({
+        title: title,
+        content: content,
+        onHide () {
+          if (content.indexOf('请先登录') !== -1) {
+            that.$router.replace('/user/sign')
+          }
+          if (content.indexOf('已退出登录') !== -1) {
+            that.$router.replace('/user')
+          }
+          if (typeof fun !== 'function') {
+            return
+          }
+          fun()
+        }
+      })
+    },
+    confirm (content, fun, title) {
+      this.$vux.confirm.show({
+        title: title,
+        content: content,
+        onConfirm () {
+          fun()
+        }
+      })
+    },
     onShowModeChange (val) {
       /** hide drawer before changing showMode **/
       this.drawerVisibility = false
@@ -124,6 +173,13 @@ export default {
     ])
   },
   mounted () {
+    let that = this
+    if (!window.hasOwnProperty('$vuf')) {
+      window.$vuf = {}
+    }
+    window.$vuf.alert = this.alert
+    window.$vuf.confirm = this.confirm
+    window.api.appThis = that
     this.handler = () => {
       if (this.path === '/demo') {
         this.box = document.querySelector('#demo_list_box')
@@ -190,14 +246,66 @@ export default {
     isDemo () {
       return /component|demo/.test(this.route.path)
     },
+    isIndex () {
+      if (this.route.path === '/') {
+        return true
+      }
+      return /^\/index/.test(this.route.path)
+    },
+    isYun () {
+      return /^\/yun|yun/.test(this.route.path)
+    },
+    isUser () {
+      return /^\/user/.test(this.route.path)
+    },
     isTabbarDemo () {
       return /tabbar/.test(this.route.path)
     },
     title () {
-      if (this.route.path === '/') return 'Home'
-      if (this.route.path === '/project/donate') return 'Donate'
-      if (this.route.path === '/demo') return 'Demo list'
-      return this.componentName ? `Demo/${this.componentName}` : 'Demo/~~'
+      if (this.route.path === '/') return this.$t('Home')
+      if (this.route.path === '/user/sign') return '用户登录'
+      if (this.route.path === '/user/profile') return '用户资料'
+      if (this.route.path === '/user') return '用户中心'
+      if (this.route.path === '/panel') return '操作面板'
+      if (this.route.path === '/panel/ssport') return '我的SS账号'
+      return this.componentName ? `Demo/${this.componentName}` : '404错误页面'
+    },
+    titleByRoute () {
+      if (this.route.path) {
+        const parts = this.route.path.split('/')
+        let partsT = []
+        for (var i in parts) {
+          var part = parts[i]
+          if (part === '') {
+            continue
+          }
+          part = this.$t(part)
+          partsT.push(part)
+        }
+        return partsT
+        // if (/component/.test(this.route.path) && parts[2]) return parts[2]
+      }
+    },
+    indexTitleName () {
+      if (!/^\/index/.test(this.route.path)) {
+        return
+      }
+      let titles = this.titleByRoute
+      return titles[1]
+    },
+    yunTitleName () {
+      if (!/^\/yun/.test(this.route.path)) {
+        return
+      }
+      let titles = this.titleByRoute
+      return titles[1]
+    },
+    userTitleName () {
+      if (!/^\/user/.test(this.route.path)) {
+        return
+      }
+      let titles = this.titleByRoute
+      return titles[1]
     }
   },
   data () {
@@ -244,6 +352,7 @@ html, body {
 }
 .vux-demo-tabbar .weui-bar__item_on .demo-icon-22 {
   color: #F70968;
+  fill: #F70968;
 }
 .vux-demo-tabbar .weui-tabbar_item.weui-bar__item_on .vux-demo-tabbar-icon-home {
   color: rgb(53, 73, 94);
