@@ -13,11 +13,15 @@
       <popup v-model="popupBox.showAdd" is-transparent>
         <div style="width: 95%;background-color:#fff;margin:10px auto;border-radius:5px;padding-top:10px;">
           <group :title="popupBox.title">
-            <selector title="选择流量" placeholder="选择您要购买的流量大小" v-model="popupBox.formData.transferGb_id" :options="transferGbList"></selector>
+            <selector ref="location" title="所在地区" placeholder="选择VPN服务器所在地" v-model="popupBox.formData.location_id" :options="locationList" @on-change="onChangeMoney"></selector>
+            <selector ref="transferGb" title="流量大小" placeholder="选择您要购买的流量大小" v-model="popupBox.formData.transferGb_id" :options="transferList" @on-change="onChangeMoney"></selector>
+            <selector ref="keepdays" title="有效时长" placeholder="选择您要保留的时长" v-model="popupBox.formData.keepdays" :options="keepdaysList" @on-change="onChangeMoney"></selector>
+            <x-input title="备注" placeholder="" v-model="popupBox.formData.remark"></x-input>
+            <cell title="订单价格"><s>原价xx元</s> <b style="color:red">现价{{popupBox.formData.sumPrice}}元</b></cell>
           </group>
           <div style="padding:20px 15px;">
             <flexbox>
-              <flexbox-item><x-button type="primary" @click.native="submit()">确定</x-button></flexbox-item>
+              <flexbox-item><x-button type="primary" @click.native="submit()">确定下单</x-button></flexbox-item>
               <flexbox-item><x-button @click.native="popupBox.showAdd=false">取消</x-button></flexbox-item>
             </flexbox>
           </div>
@@ -54,6 +58,10 @@ export default {
   components: {Box, Flexbox, FlexboxItem, XButton, Cell, Group, XDialog, Actionsheet, Popup, XInput, XNumber, Selector, XTextarea},
   created () {
     this.update()
+    // this.$watch('transferList', this.onChangeMoney)
+    // this.$watch('popupBox.formData.transferGb_id', this.onChangeMoney)
+    // this.$watch('keepdaysList', this.onChangeMoney)
+    // this.$watch('popupBox.formData.keepdays', this.onChangeMoney)
   },
   data () {
     return {
@@ -73,17 +81,44 @@ export default {
         showInfo: false,
         title: '编辑SS账号',
         formData: {
-          ipv4: ''
+          ipv4: '',
+          location_id: 1,
+          transferGb_id: 1,
+          keepdays: 30,
+          sumPrice: 0
         }
       },
       station: {id: 0},
-      transferGbList: [],
+      locationList: [],
+      transferList: [],
+      keepdaysList: [],
       lanmuList: [],
       group_title: '我的SS账号',
       rows: []
     }
   },
   methods: {
+    onChangeMoney () {
+      if (!this.transferList.length) {
+        return
+      }
+      var price1 = 0
+      var price2 = 0
+      var transferRow = this.getOption(this.transferList, this.popupBox.formData.transferGb_id)
+      price1 = transferRow.price
+      price2 = this.getOption(this.keepdaysList, this.popupBox.formData.keepdays).price
+      this.popupBox.formData.sumPrice = price1 + price2
+      var locationTitle = this.getOption(this.locationList, this.popupBox.formData.location_id).title
+      this.popupBox.formData.remark = locationTitle + '' + transferRow.transfer_gb + 'G流量'
+    },
+    getOption (options, keyField) {
+      for (var key in options) {
+        var row = options[key]
+        if (row.key === keyField) {
+          return row
+        }
+      }
+    },
     update () {
       let that = this
       that.popupBox.show = false
@@ -94,29 +129,50 @@ export default {
           return
         }
         that.rows = data.rows
-        if (data.hasOwnProperty('transferGb')) {
-          that.transferGbList = []
-          for (var key2 in data.transferGb) {
-            var row2 = data.transferGb[key2]
-            that.transferGbList.push({'key': row2.id, 'value': '' + row2.title})
+        if (data.hasOwnProperty('locationList')) {
+          that.locationList = []
+          for (var key2 in data.locationList) {
+            var row2 = data.locationList[key2]
+            row2['key'] = row2.id
+            row2['value'] = row2.title
+            that.locationList.push(row2)
+          }
+        }
+        if (data.hasOwnProperty('transferList')) {
+          that.transferList = []
+          for (var key3 in data.transferList) {
+            var row3 = data.transferList[key3]
+            row3['key'] = row3.id
+            row3.value = row3.title
+            that.transferList.push(row3)
+          }
+        }
+        if (data.hasOwnProperty('keepdaysList')) {
+          that.keepdaysList = []
+          for (var key4 in data.keepdaysList) {
+            var row4 = data.keepdaysList[key4]
+            row4.key = row4.days
+            row4.value = row4.title
+            that.keepdaysList.push(row4)
           }
         }
         for (var key in that.rows) {
           var row = that.rows[key]
           row.text = row.ipv4 + ':' + row.port
-          if (row.summary) {
-            row.text += ' (' + row.summary + ')'
+          if (row.remark) {
+            row.text += ' (' + row.remark + ')'
           }
         }
+        that.onChangeMoney()
       })
     },
     actionsheetShow (row) {
       this.popupBox.program_id = row.id
-      this.popupBox.formData.transferGb_id = row.transferGb_id
+      // this.popupBox.formData.transferGb_id = row.transferGb_id
       this.popupBox.formData.ipv4 = row.ipv4
       this.popupBox.formData.port = row.port
       this.popupBox.formData.passwd = row.passwd
-      this.popupBox.formData.summary = row.summary
+      this.popupBox.formData.remark = row.remark
       this.popupBox.formData.ssrlink = row.ssrlink
       this.actionsheet.menus['title.noop'] = '<span class="small">要对&nbsp;</span>' + row.ipv4 + ':' + row.port + '<span class="small">&nbsp;做什么？</span>'
       this.actionsheet.show = true
@@ -125,7 +181,6 @@ export default {
       this.popupBox.program_id = 0
       this.popupBox.title = '购买SS账号'
       this.popupBox.formData.title = ''
-      this.popupBox.formData.summary = ''
       this.popupBox.showAdd = true
     },
     info () {
