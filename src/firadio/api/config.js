@@ -4,7 +4,8 @@ export default{
   url: '/get',
 
   // baseURL: 'https://https.firadio.net/api',
-  baseURL: 'http://api.feieryun.cn:2780',
+  // baseURL: 'http://api.feieryun.cn:2780',
+  baseURL: 'https://https.firadio.net:444/cn2027',
   method: 'POST',
 
   transformRequest: [
