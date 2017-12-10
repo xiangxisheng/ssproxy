@@ -2,8 +2,29 @@
   <div>
     <group :title="group_title">
       <cell v-if="rows.length===0" align="center" title="您尚未购买SS账号"></cell>
-      <cell v-for="row of rows" :key="row.id" :title="row.text" value="操作" @click.native="actionsheetShow(row)">
-      </cell>
+      <!--<scroller lock-x scrollbar-y use-pullup use-pulldown height="350px" @on-pullup-loading="loadMore" @on-pulldown-loading="refresh" v-model="status" ref="scroller">-->
+      <scroller v-if="rows.length>0" lock-x scrollbar-y use-pulldown height="350px" @on-pulldown-loading="refresh" ref="scroller" v-model="status">
+        <!--content slot-->
+        
+        <!--<cell v-for="row of rows" :key="row.id" :title="row.text" value="操作" @click.native="actionsheetShow(row)"></cell>-->
+        <div class="box2">
+          <cell v-for="row of rows" :key="row.id" :title="row.text" value="操作" @click.native="actionsheetShow(row)"></cell>
+        </div>
+        <!--pullup slot-->
+<!--
+        <div slot="pullup" class="xs-plugin-pullup-container xs-plugin-pullup-up" style="position: absolute; width: 100%; height: 40px; bottom: -40px; text-align: center;">
+          <span v-show="status.pullupStatus === 'default'"></span>
+          <span class="pullup-arrow" v-show="status.pullupStatus === 'down' || status.pullupStatus === 'up'" :class="{'rotate': status.pullupStatus === 'up'}">↑</span>
+          <span v-show="status.pullupStatus === 'loading'"><spinner type="ios-small"></spinner></span>
+        </div>
+-->
+        <!--pulldown slot-->
+        <div slot="pulldown" class="xs-plugin-pulldown-container xs-plugin-pulldown-down" style="position: absolute; width: 100%; height: 60px; line-height: 60px; top: -60px; text-align: center;">
+          <span v-show="status.pulldownStatus === 'default'"></span>
+          <span class="pulldown-arrow" v-show="status.pulldownStatus === 'down' || status.pulldownStatus === 'up'" :class="{'rotate': status.pulldownStatus === 'up'}">↓</span>
+          <span v-show="status.pulldownStatus === 'loading'"><spinner type="ios-small"></spinner></span>
+        </div>
+      </scroller>
     </group>
     <box gap="10px 10px">
       <x-button @click.native="add" type="primary">购买SS账号</x-button>
@@ -40,8 +61,26 @@
           </group>
           <div style="padding:20px 15px;">
             <flexbox>
-              <flexbox-item><x-button type="primary" @click.native="submit()">确定</x-button></flexbox-item>
-              <flexbox-item><x-button @click.native="popupBox.showInfo=false">取消</x-button></flexbox-item>
+              <!--<flexbox-item><x-button type="primary" @click.native="submit()">确定</x-button></flexbox-item>-->
+              <flexbox-item><x-button @click.native="popupBox.showInfo=false">关闭</x-button></flexbox-item>
+            </flexbox>
+          </div>
+        </div>
+      </popup>
+      <popup v-model="popupBox.showEdit" is-transparent>
+        <div style="width: 95%;background-color:#fff;margin:10px auto;border-radius:5px;padding-top:10px;">
+          <group :title="popupBox.title">
+<!--
+            <selector ref="location" title="所在地区" placeholder="选择VPN服务器所在地" v-model="popupBox.formData.location_id" :options="locationList" @on-change="onChangeMoney"></selector>
+            <selector ref="transferGb" title="流量大小" placeholder="选择您要购买的流量大小" v-model="popupBox.formData.transferGb_id" :options="transferList" @on-change="onChangeMoney"></selector>
+            <selector ref="keepdays" title="有效时长" placeholder="选择您要保留的时长" v-model="popupBox.formData.keepdays" :options="keepdaysList" @on-change="onChangeMoney"></selector>
+-->
+            <x-input title="备注" placeholder="" v-model="popupBox.formData.remark"></x-input>
+          </group>
+          <div style="padding:20px 15px;">
+            <flexbox>
+              <flexbox-item><x-button type="primary" @click.native="submit()">确定下单</x-button></flexbox-item>
+              <flexbox-item><x-button @click.native="popupBox.showEdit=false">取消</x-button></flexbox-item>
             </flexbox>
           </div>
         </div>
@@ -51,11 +90,11 @@
 </template>
 
 <script>
-import {TransferDom, Box, Flexbox, FlexboxItem, XButton, Cell, Group, XDialog, Actionsheet, Popup, XInput, XNumber, Selector, XTextarea} from 'vux'
+import {TransferDom, Box, Flexbox, FlexboxItem, XButton, Cell, Group, XDialog, Actionsheet, Popup, XInput, XNumber, Selector, XTextarea, Scroller, Spinner} from 'vux'
 
 export default {
   directives: { TransferDom },
-  components: {Box, Flexbox, FlexboxItem, XButton, Cell, Group, XDialog, Actionsheet, Popup, XInput, XNumber, Selector, XTextarea},
+  components: {Box, Flexbox, FlexboxItem, XButton, Cell, Group, XDialog, Actionsheet, Popup, XInput, XNumber, Selector, XTextarea, Scroller, Spinner},
   created () {
     this.update()
     // this.$watch('transferList', this.onChangeMoney)
@@ -69,9 +108,8 @@ export default {
         show: false,
         menus: {
           'title.noop': '请选择您要的操作',
-          // zhitiaoList: '查看SS账号小纸条',
-          info: '查看SS账号连接信息'
-          // edit: '编辑SS账号',
+          info: '查看SS账号连接信息',
+          edit: '修改备注'
           // delete: '<span style="color:red">删除SS账号</span>'
         }
       },
@@ -79,6 +117,7 @@ export default {
         show: false,
         showAdd: false,
         showInfo: false,
+        showEdit: false,
         title: '编辑SS账号',
         formData: {
           ipv4: '',
@@ -94,10 +133,37 @@ export default {
       keepdaysList: [],
       lanmuList: [],
       group_title: '我的SS账号',
-      rows: []
+      rows: [],
+      status: {
+        pullupStatus: 'default',
+        pulldownStatus: 'default'
+      },
+      n1: 50
     }
   },
   methods: {
+    loadMore () {
+      setTimeout(() => {
+        this.n += 10
+        setTimeout(() => {
+          this.$refs.scroller.donePullup()
+        }, 10)
+      }, 1000)
+    },
+    refresh () {
+      this.update()
+      /*
+      setTimeout(() => {
+        this.n = 10
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.$refs.scroller.donePulldown()
+            // this.$refs.scroller.enablePullup()
+          }, 10)
+        })
+      }, 1000)
+      */
+    },
     onChangeMoney () {
       if (!this.transferList.length) {
         return
@@ -158,27 +224,33 @@ export default {
         }
         for (var key in that.rows) {
           var row = that.rows[key]
-          row.text = row.ipv4 + ':' + row.port
+          // row.text = row.ipv4 + ':' + row.port
+          row.text = row.id + ': ' + row.remark
+          /*
           if (row.remark) {
             row.text += ' (' + row.remark + ')'
           }
+          */
         }
         that.onChangeMoney()
+        if (that.$refs.scroller !== undefined) {
+          that.$refs.scroller.donePulldown()
+        }
       })
     },
     actionsheetShow (row) {
-      this.popupBox.program_id = row.id
+      this.popupBox.modify_id = row.id
       // this.popupBox.formData.transferGb_id = row.transferGb_id
       this.popupBox.formData.ipv4 = row.ipv4
       this.popupBox.formData.port = row.port
       this.popupBox.formData.passwd = row.passwd
       this.popupBox.formData.remark = row.remark
       this.popupBox.formData.ssrlink = row.ssrlink
-      this.actionsheet.menus['title.noop'] = '<span class="small">要对&nbsp;</span>' + row.ipv4 + ':' + row.port + '<span class="small">&nbsp;做什么？</span>'
+      this.actionsheet.menus['title.noop'] = '<span class="small">要对&nbsp;</span>' + row.id + ': ' + row.remark + '<span class="small">&nbsp;做什么？</span>'
       this.actionsheet.show = true
     },
     add () {
-      this.popupBox.program_id = 0
+      this.popupBox.modify_id = 0
       this.popupBox.title = '购买SS账号'
       this.popupBox.formData.title = ''
       this.popupBox.showAdd = true
@@ -189,14 +261,14 @@ export default {
     },
     edit () {
       this.popupBox.title = '编辑SS账号'
-      this.popupBox.showInfo = true
+      this.popupBox.showEdit = true
     },
     del () {
       let that = this
       let msg = '<b>' + that.popupBox.formData.title + '</b><br /><font color=red>删除后将为您保留60天</font>'
       window.$vuf.confirm(msg, function () {
         let params = {}
-        params.program_id = that.popupBox.program_id
+        params.modify_id = that.popupBox.modify_id
         window.api.post('/panel/diantai/manage/program/del.php', params, function (data) {
           that.update()
         })
@@ -206,22 +278,35 @@ export default {
       let that = this
       var path = '/panel/ssproxy/port/add.php'
       let row = this.popupBox.formData
-      if (this.popupBox.port_id) {
-        row.port_id = this.popupBox.port_id
-        path = '/panel/diantai/manage/program/modify.php'
+      if (this.popupBox.modify_id) {
+        row.modify_id = this.popupBox.modify_id
+        path = '/panel/ssproxy/port/save.php'
       }
       window.api.post(path, row, function (data) {
         that.update()
         that.popupBox.showAdd = false
+        that.popupBox.showEdit = false
       })
     }
   }
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+.box2-wrap {
+  height: 3000px;
+}
 .small {
   color: #666;
   font-size: 14px;
+}
+.rotate {
+  display: inline-block;
+  transform: rotate(-180deg);
+}
+.pullup-arrow {
+  transition: all linear 0.2s;
+  color: #666;
+  font-size: 25px;
 }
 </style>
