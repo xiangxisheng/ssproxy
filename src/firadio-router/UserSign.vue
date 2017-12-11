@@ -16,7 +16,7 @@
       <x-button @click.native="sendvcode">{{$t('ResetPasswd')}}</x-button>
       <x-button @click.native="showGroup='email'">{{$t('BackToEmailCheck')}}</x-button>
     </group>
-    <group v-if="showGroup==='reg'" title="用户注册" style="padding: 15px;">
+    <group v-if="showGroup==='reg'" :title="$t('UserRegister')" style="padding: 15px;">
       <x-input type="email" :title="$t('email')" :is-type="checkEmail" :placeholder="$t('inputemail')" v-model="formData.email"></x-input>
       <x-input :title="$t('VerCode')" :placeholder="$t('TypeVerCode')" v-model="formData.vcode"></x-input>
       <x-input title="$t('SetUsername')" placeholder="$t('SetYourUsername')" v-model="formData.username"></x-input>
@@ -24,7 +24,7 @@
       <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">{{$t('FinishReg')}}</x-button>
       <x-button @click.native="showGroup='email'">{{$t('BackToEmailCheck')}}</x-button>
     </group>
-    <group v-if="showGroup==='setpwd'" title="找回密码" style="padding: 15px;">
+    <group v-if="showGroup==='setpwd'" :title="$t('ResetPasswd')" style="padding: 15px;">
       <x-input type="email" :title="$t('email')" :is-type="checkEmail" :placeholder="$t('inputemail')" v-model="formData.email"></x-input>
       <x-input :title="$t('VerCode')" :placeholder="$t('TypeVerCode')" v-model="formData.vcode"></x-input>
       <x-input :title="$t('ResetLoginPassword')" :placeholder="$t('TypeYourNewPassword')" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
@@ -96,6 +96,21 @@ BackToEmailCheck:
 FinishReg:
   en: Finish Register
   zh-CN: 完成注册
+UserRegister:
+  en: User Register
+  zh-CN: 用户名注册
+InvalidEmail:
+  en: Invalid Email
+  zh-CN: 邮箱格式不正确
+PleaseCheckYourEmail:
+  en: Please Check Your Email
+  zh-CN: 请核对您的邮箱地址
+TheEmailNotRegister:
+  en: The Email Is Not Registered
+  zh-CN: 您输入的邮箱地址尚未注册到本系统
+TheEmailNotRegister2:
+  en: if Correct，Click [Confirm]，<br />your will take a Verification Code，<br />if incorrect, you can[Cancel]
+  zh-CN: 如果确认无误，请点击[确定]，<br />系统将会发送[验证码]到此邮箱，<br />如果输入有误，请点击[取消]
 </i18n>
 
 <script>
@@ -119,7 +134,7 @@ export default {
         that.valid1 = /^[a-z0-9]{1,20}([_\-.][a-z0-9]{1,20})?@[a-z0-9-]{1,20}(\.[a-z0-9-]{1,20}){0,2}(\.[a-z]{2,6})$/i.test(value)
         return {
           valid: that.valid1,
-          msg: '邮箱格式不正确'
+          msg: that.$t('InvalidEmail')
         }
       }
     }
@@ -164,15 +179,13 @@ export default {
         }
         if (data.flag === 'unregistered') {
           var msg1 = '<font color="red">' + formData.email + '</font><br />'
-          msg1 += '您输入的邮箱地址尚未注册到本系统' + '<br />'
-          msg1 += '如果确认无误，请点击[确定]，' + '<br />'
-          msg1 += '系统将会发送[验证码]到此邮箱，' + '<br />'
-          msg1 += '如果输入有误，请点击[取消]'
+          msg1 += that.$t('TheEmailNotRegister') + '<br />'
+          msg1 += that.$t('TheEmailNotRegister2')
           window.$vuf.confirm(msg1, function () {
             that.showGroup = 'reg'
             window.api.post('/public/email/sendvcode.php', formData, function (data2) {
             })
-          }, '请核对您的邮箱地址')
+          }, that.$t('PleaseCheckYourEmail'))
           return
         }
         if (data.flag === 'success') {
@@ -189,16 +202,14 @@ export default {
       let that = this
       let formData = window.clone(that.formData)
       var msg1 = ''
-      msg1 += '请核对您的邮箱地址' + '<br />'
+      msg1 += that.$t('PleaseCheckYourEmail') + '<br />'
       msg1 += '<font color="red">' + formData.email + '</font><br />'
-      msg1 += '如果确认无误，请点击[确定]，' + '<br />'
-      msg1 += '系统将会发送[验证码]到此邮箱，' + '<br />'
-      msg1 += '如果输入有误，请点击[取消]'
+      msg1 += that.$t('TheEmailNotRegister2')
       window.$vuf.confirm(msg1, function () {
         that.showGroup = 'setpwd'
         window.api.post('/public/email/sendvcode.php', formData, function (data) {
         })
-      }, '找回密码')
+      }, that.$t('ResetPasswd'))
     }
   }
 }
