@@ -1,7 +1,7 @@
 <template>
   <div>
-    <group title="平台主页">
-      <cell title="进入平台面板" link="/panel" :value="$t('Entry')"></cell>
+    <group :title="$t('Welcome')">
+      <cell :title="$t('EntryPanel')" link="/panel" :value="$t('Entry')"></cell>
     </group>
   </div>
 </template>
@@ -10,6 +10,12 @@
 Entry:
   en: Entry
   zh-CN: 进入
+Welcome:
+  en: Welcome
+  zh-CN: 平台主页
+EntryPanel:
+  en: Entry To Panel
+  zh-CN: 进入平台面板
 </i18n>
 
 <script>

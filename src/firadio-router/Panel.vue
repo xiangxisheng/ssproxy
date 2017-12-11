@@ -1,7 +1,7 @@
 <template>
   <div>
     <group>
-      <cell title="我的SS账号" link="/panel/ssport" :value="$t('Entry')">
+      <cell :title="$t('MySSAccount')" link="/panel/ssport" :value="$t('Entry')">
         <span class="demo-icon free" slot="icon"><x-icon type="person-stalker"></x-icon></span>
       </cell>
     </group>

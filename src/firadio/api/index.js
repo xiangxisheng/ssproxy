@@ -21,6 +21,7 @@ class API {
     param = JSON.stringify(param)
     config.data.param = param
     let appThis = this.appThis
+    config.data.lang = appThis.$i18n.locale()
     appThis.isLoading_api = true
     axios.post(path, {}, config).then(res => {
       appThis.isLoading_api = false
@@ -51,7 +52,11 @@ class API {
         isUnLogined = true
       }
       if (data.hasOwnProperty('message')) {
-        window.$vuf.alert(data.message, function () {
+        var msg = data.message
+        if (msg === '您输入的密码错误' && appThis.$i18n.locale() === 'en') {
+          msg = 'Your Password Is Incorrect'
+        }
+        window.$vuf.alert(msg, function () {
           if (data.code === -2 && isUnLogined) {
             appThis.$router.push({path: '/user/sign'})
           }

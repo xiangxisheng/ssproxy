@@ -9,27 +9,27 @@
         没注册过的邮箱会提示让你接收验证码。
       </div>
     </group>
-    <group v-if="showGroup==='login'" title="用户登录" style="padding: 15px;">
+    <group v-if="showGroup==='login'" :title="$t('UserLogin')" style="padding: 15px;">
       <x-input type="email" :title="$t('email')" :is-type="checkEmail" :placeholder="$t('inputemail')" v-model="formData.email" :key-enter="emailCheck"></x-input>
-      <x-input title="登录密码" placeholder="请输入您的登录密码" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
-      <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">登录</x-button>
-      <x-button @click.native="sendvcode">找回密码</x-button>
-      <x-button @click.native="showGroup='email'">返回邮箱地址检查</x-button>
+      <x-input :title="$t('LoginPass')" :placeholder="$t('PleaseTypeYourPassword')" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
+      <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">{{$t('Login')}}</x-button>
+      <x-button @click.native="sendvcode">{{$t('ResetPasswd')}}</x-button>
+      <x-button @click.native="showGroup='email'">{{$t('BackToEmailCheck')}}</x-button>
     </group>
     <group v-if="showGroup==='reg'" title="用户注册" style="padding: 15px;">
       <x-input type="email" :title="$t('email')" :is-type="checkEmail" :placeholder="$t('inputemail')" v-model="formData.email"></x-input>
       <x-input title="收到的验证码" placeholder="请输入您收到的验证码" v-model="formData.vcode"></x-input>
       <x-input title="设置用户名" placeholder="可以是2至5个中文汉字或4至10个英文字母" v-model="formData.username"></x-input>
       <x-input title="设置登录密码" placeholder="请输入您要设置的登录密码" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
-      <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">完成注册</x-button>
-      <x-button @click.native="showGroup='email'">返回邮箱地址检查</x-button>
+      <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">{{$t('FinishReg')}}</x-button>
+      <x-button @click.native="showGroup='email'">{{$t('BackToEmailCheck')}}</x-button>
     </group>
     <group v-if="showGroup==='setpwd'" title="找回密码" style="padding: 15px;">
       <x-input type="email" :title="$t('email')" :is-type="checkEmail" :placeholder="$t('inputemail')" v-model="formData.email"></x-input>
       <x-input title="收到的验证码" placeholder="请输入您收到的验证码" v-model="formData.vcode"></x-input>
       <x-input title="重设登录密码" placeholder="请输入您要设置的登录密码" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
-      <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">提交</x-button>
-      <x-button @click.native="showGroup='email'">返回邮箱地址检查</x-button>
+      <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">{{$('Submit')}}</x-button>
+      <x-button @click.native="showGroup='email'">{{$t('BackToEmailCheck')}}</x-button>
     </group>
     <div align="left" style="padding: 0px 13px; font-size: 14px; color: #000099">
     </div>
@@ -37,6 +37,12 @@
 </template>
 
 <i18n>
+Login:
+  en: Login
+  zh-CN: 登录
+Submit:
+  en: Submit
+  zh-CN: 提交
 inputemail:
   en: Please type your E-mail
   zh-CN: 请输入您的常用E-mail邮箱
@@ -46,6 +52,24 @@ email:
 next:
   en: Next
   zh-CN: 下一步
+LoginPass:
+  en: Password
+  zh-CN: 登录密码
+PleaseTypeYourPassword:
+  en: Please Type Your Password
+  zh-CN: 请输入您的登录密码
+UserLogin:
+  en: UserLogin
+  zh-CN: 用户登录
+ResetPasswd:
+  en: Reset Password
+  zh-CN: 找回密码
+BackToEmailCheck:
+  en: Back To Email Check
+  zh-CN: 返回邮箱地址检查
+FinishReg:
+  en: Finish Register
+  zh-CN: 完成注册
 </i18n>
 
 <script>

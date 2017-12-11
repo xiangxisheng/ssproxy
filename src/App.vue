@@ -31,9 +31,10 @@
         :title="title"
         :transition="headerTransition"
         @on-click-more="onClickMore">
+        <!--
           <span v-if="route.path === '/' || route.path === '/component/drawer'" slot="overwrite-left" @click="drawerVisibility = !drawerVisibility">
             <x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px;"></x-icon>
-          </span>
+          </span>-->
         </x-header>
 
         <!-- remember to import BusPlugin in main.js if you use components: x-img and sticky -->
@@ -46,16 +47,16 @@
         <tabbar class="vux-demo-tabbar" icon-class="vux-center" v-show="!isTabbarDemo" slot="bottom">
           <tabbar-item :link="{path:'/'}" :selected="isIndex">
             <span class="demo-icon-22" slot="icon"><x-icon type="ios-home-outline"></x-icon></span>
-            <span slot="label"><span v-if="indexTitleName" class="vux-demo-tabbar-component">{{indexTitleName}}</span><span v-else>{{$t('主页')}}</span></span>
+            <span slot="label"><span v-if="indexTitleName" class="vux-demo-tabbar-component">{{indexTitleName}}</span><span v-else>{{$t('Home')}}</span></span>
           </tabbar-item>
-          <tabbar-item :link="{path:'/panel'}" :selected="isYun">
+          <tabbar-item :link="{path:'/panel'}" :selected="isPanel">
             <!--<span class="demo-icon-22" slot="icon">&#xe642;</span>-->
             <span class="demo-icon-22" slot="icon"><x-icon type="ios-cloud-outline"></x-icon></span>
-            <span slot="label"><span v-if="yunTitleName" class="vux-demo-tabbar-component">{{yunTitleName}}</span><span v-else>{{$t('面板')}}</span></span>
+            <span slot="label"><span v-if="yunTitleName" class="vux-demo-tabbar-component">{{yunTitleName}}</span><span v-else>{{$t('Panel')}}</span></span>
           </tabbar-item>
           <tabbar-item :link="{path:'/user'}" :selected="isUser">
             <span class="demo-icon-22" slot="icon"><x-icon type="ios-person-outline"></x-icon></span>
-            <span slot="label"><span v-if="userTitleName" class="vux-demo-tabbar-component">{{userTitleName}}</span><span v-else>{{$t('用户')}}</span></span>
+            <span slot="label"><span v-if="userTitleName" class="vux-demo-tabbar-component">{{userTitleName}}</span><span v-else>{{$t('User')}}</span></span>
           </tabbar-item>
         </tabbar>
 
@@ -74,7 +75,7 @@ Home:
 message:
   en: Message
   zh-CN: 消息
-user:
+UserCenter:
   en: User Center
   zh-CN: 用户中心
 login:
@@ -83,6 +84,18 @@ login:
 sign:
   en: Sign
   zh-CN: 登录
+Panel:
+  en: Panel
+  zh-CN: 面板
+Profile:
+  en: Profile
+  zh-CN: 用户资料
+profile:
+  en: Profile
+  zh-CN: 用户资料
+ssport:
+  en: SS Account
+  zh-CN: 我的SS账号
 </i18n>
 
 <script>
@@ -252,8 +265,8 @@ export default {
       }
       return /^\/index/.test(this.route.path)
     },
-    isYun () {
-      return /^\/yun|yun/.test(this.route.path)
+    isPanel () {
+      return /^\/panel/.test(this.route.path)
     },
     isUser () {
       return /^\/user/.test(this.route.path)
@@ -263,12 +276,12 @@ export default {
     },
     title () {
       if (this.route.path === '/') return this.$t('Home')
-      if (this.route.path === '/user/sign') return '用户登录'
-      if (this.route.path === '/user/profile') return '用户资料'
-      if (this.route.path === '/user') return '用户中心'
-      if (this.route.path === '/panel') return '操作面板'
-      if (this.route.path === '/panel/ssport') return '我的SS账号'
-      return this.componentName ? `Demo/${this.componentName}` : '404错误页面'
+      if (this.route.path === '/user/sign') return this.$t('Sign')
+      if (this.route.path === '/user/profile') return this.$t('Profile')
+      if (this.route.path === '/user') return this.$t('UserCenter')
+      if (this.route.path === '/panel') return this.$t('Panel')
+      if (this.route.path === '/panel/ssport') return this.$t('MySSAccount')
+      return this.componentName ? `Demo/${this.componentName}` : this.$t('404Error')
     },
     titleByRoute () {
       if (this.route.path) {
@@ -294,7 +307,7 @@ export default {
       return titles[1]
     },
     yunTitleName () {
-      if (!/^\/yun/.test(this.route.path)) {
+      if (!/^\/panel/.test(this.route.path)) {
         return
       }
       let titles = this.titleByRoute

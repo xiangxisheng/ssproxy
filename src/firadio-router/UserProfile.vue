@@ -1,18 +1,23 @@
 <template>
   <div>
     <group>
-      <cell title="昵称" :value="nickname">
+      <cell :title="$t('Nickname')" :value="nickname">
         <span class="demo-icon" slot="icon" style="color:#F70968">&#xe633;</span>
       </cell>
       <div style="margin: 0px 10px;">
-        <x-button @click.native="logout" type="primary">退出当前账号</x-button>
+        <x-button @click.native="logout" type="primary">{{$t('ExitLogin')}}</x-button>
       </div>
     </group>
   </div>
 </template>
 
 <i18n>
-
+Nickname:
+  en: Nickname
+  zh-CN: 昵称
+ExitLogin:
+  en: Exit Login
+  zh-CN: 退出当前账号
 </i18n>
 
 <script>
