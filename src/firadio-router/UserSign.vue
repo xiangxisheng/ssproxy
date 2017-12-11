@@ -18,16 +18,16 @@
     </group>
     <group v-if="showGroup==='reg'" title="用户注册" style="padding: 15px;">
       <x-input type="email" :title="$t('email')" :is-type="checkEmail" :placeholder="$t('inputemail')" v-model="formData.email"></x-input>
-      <x-input title="收到的验证码" placeholder="请输入您收到的验证码" v-model="formData.vcode"></x-input>
-      <x-input title="设置用户名" placeholder="可以是2至5个中文汉字或4至10个英文字母" v-model="formData.username"></x-input>
-      <x-input title="设置登录密码" placeholder="请输入您要设置的登录密码" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
+      <x-input :title="$t('VerCode')" :placeholder="$t('TypeVerCode')" v-model="formData.vcode"></x-input>
+      <x-input title="$t('SetUsername')" placeholder="$t('SetYourUsername')" v-model="formData.username"></x-input>
+      <x-input :title="$t('SetLoginPassword')" :placeholder="$t('TypeYourPassword')" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
       <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">{{$t('FinishReg')}}</x-button>
       <x-button @click.native="showGroup='email'">{{$t('BackToEmailCheck')}}</x-button>
     </group>
     <group v-if="showGroup==='setpwd'" title="找回密码" style="padding: 15px;">
       <x-input type="email" :title="$t('email')" :is-type="checkEmail" :placeholder="$t('inputemail')" v-model="formData.email"></x-input>
-      <x-input title="收到的验证码" placeholder="请输入您收到的验证码" v-model="formData.vcode"></x-input>
-      <x-input title="重设登录密码" placeholder="请输入您要设置的登录密码" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
+      <x-input :title="$t('VerCode')" :placeholder="$t('TypeVerCode')" v-model="formData.vcode"></x-input>
+      <x-input :title="$t('ResetLoginPassword')" :placeholder="$t('TypeYourNewPassword')" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
       <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">{{$('Submit')}}</x-button>
       <x-button @click.native="showGroup='email'">{{$t('BackToEmailCheck')}}</x-button>
     </group>
@@ -37,6 +37,32 @@
 </template>
 
 <i18n>
+VerCode:
+  en: Verification Code
+  zh-CN: 收到的验证码
+TypeVerCode:
+  en: Type In Verification Code
+  zh-CN: 请输入您收到的验证码
+SetUsername:
+  en: Set Your Username
+  zh-CN: 设置用户名
+SetYourUsername:
+  en: Using 4 to 10 char for your Username
+  zh-CN: 可以是2至5个中文汉字或4至10个英文字母
+SetLoginPassword:
+  en: SetLoginPassword
+  zh-CN: 设置登录密码
+TypeYourPassword:
+  en: Type Your Password
+  zh-CN: 请输入您要设置的登录密码
+ResetLoginPassword:
+  en: Reset Login Password
+  zh-CN: 重设登录密码
+TypeYourNewPassword:
+  en: Type Your New Login Password
+  zh-CN: 请输入您要设置的登录密码
+
+
 Login:
   en: Login
   zh-CN: 登录
