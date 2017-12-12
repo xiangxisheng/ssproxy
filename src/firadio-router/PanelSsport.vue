@@ -329,6 +329,8 @@ export default {
           var row = that.rows[key]
           // row.text = row.ipv4 + ':' + row.port
           row.text = row.id + ': ' + row.remark
+          var bytes = parseInt(row.transfer_upload, 10) + parseInt(row.transfer_download, 0)
+          row.text += ' (' + that.getHumanFormat(bytes) + ' / ' + row.transfer_enable_gb + 'GB)'
           /*
           if (row.remark) {
             row.text += ' (' + row.remark + ')'
@@ -390,6 +392,16 @@ export default {
         that.popupBox.showAdd = false
         that.popupBox.showEdit = false
       })
+    },
+    getHumanFormat (bytes) {
+      if (isNaN(bytes)) return '0 B'
+      if (bytes === 0) return '0 B'
+      var k = 1024
+      var sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+      var i = Math.floor(Math.log(bytes) / Math.log(k))
+      // return (bytes / Math.pow(k, i)) + ' ' + sizes[i]
+      return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i]
+      // toPrecision(3) 后面保留两位小数，如1.00GB
     }
   }
 }
