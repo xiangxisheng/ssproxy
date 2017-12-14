@@ -4,5 +4,7 @@
   "PanelSsport#/panel/ssport",
   "UserCenter#/user",
   "UserSign#/user/sign",
-  "UserProfile#/user/profile"
+  "UserProfile#/user/profile",
+  "PanelAdminSetting#/panel/admin-setting",
+  "PanelAdminBalance#/panel/admin-balance"
 ]

@@ -38,6 +38,7 @@ export default{
     // appId: 1,
     // appName: 'firadio_yun',
     // siteId: 1,
+    domain: document.domain,
     sessionId: (function () {
       if (!localStorage.hasOwnProperty('sessionId')) {
         localStorage.sessionId = new Date().getTime() + Math.random().toString().substring(2)

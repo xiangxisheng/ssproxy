@@ -5,9 +5,7 @@
       <!--<scroller lock-x scrollbar-y use-pullup use-pulldown height="350px" @on-pullup-loading="loadMore" @on-pulldown-loading="refresh" v-model="status" ref="scroller">-->
       <scroller v-if="rows.length>0" lock-x scrollbar-y use-pulldown height="350px" @on-pulldown-loading="refresh" ref="scroller" v-model="status">
         <!--content slot-->
-        
-        <!--<cell v-for="row of rows" :key="row.id" :title="row.text" :value="$t('Entry')" @click.native="actionsheetShow(row)"></cell>-->
-        <div class="box2">
+        <div>
           <cell v-for="row of rows" :key="row.id" :title="row.text" :value="$t('Entry')" @click.native="actionsheetShow(row)"></cell>
         </div>
         <!--pullup slot-->
@@ -282,7 +280,7 @@ export default {
       let that = this
       that.popupBox.show = false
       let param = {}
-      param.station_id = this.$route.params.station_id
+      // param.station_id = this.$route.params.station_id
       window.api.post('/panel/ssproxy/port/list.php', param, function (data) {
         if (!data.hasOwnProperty('rows')) {
           return
@@ -408,9 +406,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.box2-wrap {
-  height: 3000px;
-}
 .small {
   color: #666;
   font-size: 14px;

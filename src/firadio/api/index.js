@@ -18,6 +18,7 @@ class API {
   }
   // 添加授权
   post (path, param, fun) {
+    param.site_id = 1
     param = JSON.stringify(param)
     config.data.param = param
     let appThis = this.appThis

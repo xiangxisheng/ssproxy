@@ -96,6 +96,12 @@ profile:
 ssport:
   en: SS Account
   zh-CN: 我的SS账号
+admin-setting:
+  en: Site Setting
+  zh-CN: 站点设置
+admin-balance:
+  en: Balance Manager
+  zh-CN: 余额管理
 </i18n>
 
 <script>
@@ -281,7 +287,10 @@ export default {
       if (this.route.path === '/user') return this.$t('UserCenter')
       if (this.route.path === '/panel') return this.$t('Panel')
       if (this.route.path === '/panel/ssport') return this.$t('MySSAccount')
-      return this.componentName ? `Demo/${this.componentName}` : this.$t('404Error')
+      if (this.route.path === '/panel/admin-setting') return this.$t('SiteSettings')
+      if (this.route.path === '/panel/admin-balance') return this.$t('AccountBalance')
+      return this.route.path
+      // return this.componentName ? `Demo/${this.componentName}` : this.$t('404Error')
     },
     titleByRoute () {
       if (this.route.path) {
