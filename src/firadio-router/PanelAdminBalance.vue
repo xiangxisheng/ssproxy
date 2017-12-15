@@ -124,9 +124,11 @@ export default {
         that.rows = data.rows
         for (var key in that.rows) {
           var row = that.rows[key]
-          row.nickname = '用户' + row.owner_uid
+          row.nickname = row.username
           row.text = row.id + ': ' + row.nickname
-          row.text += ', 余额:' + parseFloat(row.balance) + '元'
+          if (row.balance) {
+            row.text += ', 余额:' + parseFloat(row.balance) + '元'
+          }
         }
         if (that.$refs.scroller !== undefined) {
           that.$refs.scroller.donePulldown()

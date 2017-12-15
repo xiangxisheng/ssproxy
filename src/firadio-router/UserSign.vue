@@ -19,7 +19,7 @@
     <group v-if="showGroup==='reg'" :title="$t('UserRegister')" style="padding: 15px;">
       <x-input type="email" :title="$t('email')" :is-type="checkEmail" :placeholder="$t('inputemail')" v-model="formData.email"></x-input>
       <x-input :title="$t('VerCode')" :placeholder="$t('TypeVerCode')" v-model="formData.vcode"></x-input>
-      <x-input title="$t('SetUsername')" placeholder="$t('SetYourUsername')" v-model="formData.username"></x-input>
+      <x-input :title="$t('SetUsername')" :placeholder="$t('SetYourUsername')" v-model="formData.username"></x-input>
       <x-input :title="$t('SetLoginPassword')" :placeholder="$t('TypeYourPassword')" type="password" v-model="formData.password" :key-enter="emailCheck"></x-input>
       <x-button @click.native="emailCheck" type="primary" :disabled="!valid1">{{$t('FinishReg')}}</x-button>
       <x-button @click.native="showGroup='email'">{{$t('BackToEmailCheck')}}</x-button>
@@ -167,14 +167,6 @@ export default {
         }
         if (data.flag === 'registered') {
           that.showGroup = 'login'
-          /*
-          var msg2 = '<font color="green">' + formData.email + '</font><br />'
-          msg2 += '您输入的账号状态正常' + '<br />'
-          msg2 += '可以输入密码进行登录了'
-          window.$vuf.alert(msg2, function () {
-            that.showGroup = 'login'
-          })
-          */
           return
         }
         if (data.flag === 'unregistered') {
